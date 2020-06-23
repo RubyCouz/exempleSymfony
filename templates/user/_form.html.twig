@@ -1,0 +1,15 @@
+{{ form_start(form) }}
+<div class="row">
+    <div class="col-sm-6 offset-sm-3">
+        {{ form_widget(form) }}
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-3 offset-sm-3 text-center">
+        <a href="{{ path('user_index') }}" class="btn btn-secondary">back to list</a>
+    </div>
+    <div class="col-sm-3 text-center">
+        <button class="btn btn-success">{{ button_label|default('Save') }}</button>
+    </div>
+</div>
+{{ form_end(form) }}

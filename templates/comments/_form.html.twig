@@ -1,0 +1,11 @@
+{{ form_start(form) }}
+    {{ form_row(form.content) }}
+<div class="row  text-center">
+    <div class="col-sm-6">
+        <a href="{{ path('products_show', {'user': app.user.id, 'id': product.id}) }}" class="btn btn-outline-primary">Retour</a>
+    </div>
+    <div class="col-sm-6">
+        <button class="btn btn-primary">{{ button_label|default('Save') }}</button>
+    </div>
+</div>
+{{ form_end(form) }}

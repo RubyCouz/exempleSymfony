@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Products index{% endblock %}
+
+{% block body %}
+    <div class="container">
+    {% if (is_granted('ROLE_ADMIN')) %}
+        <h1>Products index</h1>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>ProductName</th>
+                <th>SupplierId</th>
+                <th>CategoryId</th>
+                <th>QuantityPerUnit</th>
+                <th>UnitPrice</th>
+                <th>UnitsInStock</th>
+                <th>UnitsOnOrder</th>
+                <th>RedorderLevel</th>
+                <th>Discontinued</th>
+                <th>actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for product in products %}
+                <tr>
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.ProductName }}</td>
+                    <td>{{ product.SupplierId }}</td>
+                    <td>{{ product.CategoryId }}</td>
+                    <td>{{ product.QuantityPerUnit }}</td>
+                    <td>{{ product.UnitPrice }}</td>
+                    <td>{{ product.UnitsInStock }}</td>
+                    <td>{{ product.UnitsOnOrder }}</td>
+                    <td>{{ product.RedorderLevel }}</td>
+                    <td>{{ product.Discontinued }}</td>
+                    <td>
+                        <a href="{{ path('products_show', {'id': product.id}) }}">show</a>
+                        <a href="{{ path('products_edit', {'id': product.id}) }}">edit</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="11">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{{ path('products_new') }}">Create new</a>
+        </div>
+    {% else %}
+        <div class="row">
+            {% for product in products %}
+                <div class="col-sm-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">{{ product.ProductName }}</h4>
+                            <p class="category">Category subtitle</p>
+                        </div>
+                        <div class="card-body">
+                           <div class="row">
+                               <div class="col-sm-12">
+                                   <img src="{{ asset('images/profil/' ~ product.picture ) }}" alt="photo du produit" title="{{ product.picture }}" class="cardPic">
+                               </div>
+                           </div>
+                            <div class="row">
+                               <div class="col-sm-6">
+                                   <a href="{{ path('products_show', {'id': product.id}) }}">Détail</a>
+                               </div>
+                           </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

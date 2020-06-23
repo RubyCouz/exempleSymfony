@@ -1,0 +1,178 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Products{% endblock %}
+
+{% block body %}
+    <div class="container">
+        {% if (is_granted('ROLE_ADMIN')) %}
+            <h1>Products</h1>
+
+            <table class="table">
+                <tbody>
+                <tr>
+                    <th>Id</th>
+                    <td>{{ product.id }}</td>
+                </tr>
+                <tr>
+                    <th>ProductName</th>
+                    <td>{{ product.ProductName }}</td>
+                </tr>
+                <tr>
+                    <th>SupplierId</th>
+                    <td>{{ product.SupplierId }}</td>
+                </tr>
+                <tr>
+                    <th>CategoryId</th>
+                    <td>{{ product.CategoryId }}</td>
+                </tr>
+                <tr>
+                    <th>QuantityPerUnit</th>
+                    <td>{{ product.QuantityPerUnit }}</td>
+                </tr>
+                <tr>
+                    <th>UnitPrice</th>
+                    <td>{{ product.UnitPrice }}</td>
+                </tr>
+                <tr>
+                    <th>UnitsInStock</th>
+                    <td>{{ product.UnitsInStock }}</td>
+                </tr>
+                <tr>
+                    <th>UnitsOnOrder</th>
+                    <td>{{ product.UnitsOnOrder }}</td>
+                </tr>
+                <tr>
+                    <th>RedorderLevel</th>
+                    <td>{{ product.RedorderLevel }}</td>
+                </tr>
+                <tr>
+                    <th>Discontinued</th>
+                    <td>{{ product.Discontinued }}</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <a href="{{ path('products_index') }}">back to list</a>
+
+            <a href="{{ path('products_edit', {'id': product.id}) }}">edit</a>
+
+            {{ include('products/_delete_form.html.twig') }}
+        {% else %}
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <img src="{{ asset('images/profil/' ~ product.picture ) }}" alt="photo du produit"
+                                         title="{{ product.picture }}" class="cardPic">
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            {{ product.ProductName }}
+                                        </div>
+                                        <div class="col-sm-12">
+                                            {% if product.description != null %}
+                                                {{ product.description }}
+                                            {% else %}
+                                                <p>Pas de description pour ce produit</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <p class="h2">Commentaires</p>
+                </div>
+            </div>
+            {% for comment in comments %}
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                      <span>Le {{ comment.date|date("d/m/Y") }}</span>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        {% if comment.dateUpdate != null %}
+                                        <span>modifié le {{ comment.dateUpdate|date("d/m/Y") }}</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                       <span>par {{ comment.idUser }}</span>
+                                    </div>
+                                    {% if app.user.email == comment.idUser %}
+                                    <div class="col-sm-3">
+                                        <span><a href="{{ path('comments_edit', {'id' : comment.id, 'product': product.id, 'user': app.user.id,}) }}" class="btn btn-primary">Modifier</a></span>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal{{ comment.id }}">
+                                            Supprimer
+                                        </button>
+                                        <!-- del Modal -->
+                                        <div class="modal fade" id="exampleModal{{ comment.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Suppression du commentaire</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>Etes-vous sûr de vouloir supprimer ce commentaire ?</p>
+                                                        <p>Cette action sera permanente et irréversible.</p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
+                                                        <form method="post" action="{{ path('comments_delete', {'id': comment.id, 'user': app.user.id, 'product': product.id}) }}" >
+                                                            <input type="hidden" name="_method" value="DELETE">
+                                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ comment.id) }}">
+                                                            <button class="btn btn-danger">Oui</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        {{ comment.content }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% if app.user.email == comment.idUser %}
+
+                {% endif %}
+
+            {% else %}
+                Pas de Commentaire pour cet article
+            {% endfor %}
+        {% endif %}
+
+        <p class="h3">Ajouter un commentaire</p>
+        {{ form_start(form) }}
+        {{ form_row(form.content) }}
+        <div class="row  text-center">
+            <div class="col-sm-6 offset-sm-6">
+                <button class="btn btn-primary">{{ button_label|default('Ajouter un commentaire') }}</button>
+            </div>
+        </div>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}
