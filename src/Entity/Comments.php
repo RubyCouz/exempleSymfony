@@ -5,13 +5,20 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\CommentsRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=CommentsRepository::class)
  * @ApiResource(
- *     collectionOperations={""},
- *     itemOperations={"get"}
+ *     normalizationContext={
+ *     "groups"={"read:comment"},
+ *     },
+ *
+ *     attributes={
+ *     "order"={"date":"DESC"}
+ *     }
  * )
+ *
  */
 class Comments
 {
@@ -19,33 +26,39 @@ class Comments
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"read:comment"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"read:comment"})
      */
     private $content;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"read:comment"})
      */
     private $date;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read:comment"})
      */
     private $date_update;
 
     /**
      * @ORM\ManyToOne(targetEntity=Products::class, inversedBy="coments")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"read:comment"})
      */
     private $id_product;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"read:comment"})
      */
     private $id_user;
 

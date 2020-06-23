@@ -19,6 +19,8 @@ class CommentsController extends AbstractController
 {
     /**
      * @Route("/", name="comments_index", methods={"GET"})
+     * @param CommentsRepository $commentsRepository
+     * @return Response
      */
     public function index(CommentsRepository $commentsRepository): Response
     {
