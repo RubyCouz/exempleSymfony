@@ -17,7 +17,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     },
  *     attributes={
  *     "order"={"date":"DESC"}
- *     }
+ *     },
  *     paginationItemsPerPage=2,
  * )
  * @ApiFilter(SearchFilter::class, properties={"id_product": "exact"})
@@ -52,14 +52,14 @@ class Comments
     private $date_update;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Products::class, inversedBy="coments")
+     * @ORM\ManyToOne(targetEntity=Products::class, inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read:comment"})
      */
     private $id_product;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="comments")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read:comment"})
      */
