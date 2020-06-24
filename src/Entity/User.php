@@ -2,13 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
+use App\Repository\UserRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -23,6 +25,8 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * 
+     * @Groups({"read:comment"})
      */
     private $id;
 
@@ -57,7 +61,7 @@ class User implements UserInterface
     private $role;
 
     /**
-     * @ORM\OneToMany(targetEntity=Comments::class, mappedBy="id_user", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Comments::class, mappedBy="user", orphanRemoval=true)
      */
     private $comments;
 
@@ -144,7 +148,7 @@ class User implements UserInterface
     {
         if (!$this->comments->contains($comment)) {
             $this->comments[] = $comment;
-            $comment->setIdUser($this);
+            $comment->setUser($this);
         }
 
         return $this;
@@ -155,8 +159,8 @@ class User implements UserInterface
         if ($this->comments->contains($comment)) {
             $this->comments->removeElement($comment);
             // set the owning side to null (unless already changed)
-            if ($comment->getIdUser() === $this) {
-                $comment->setIdUser(null);
+            if ($comment->getUser() === $this) {
+                $comment->setUser(null);
             }
         }
 

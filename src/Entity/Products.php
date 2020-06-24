@@ -2,13 +2,16 @@
 
 namespace App\Entity;
 
-use App\Repository\ProductsRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ProductsRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=ProductsRepository::class)
+ * 
  */
 class Products
 {
@@ -16,11 +19,13 @@ class Products
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"read:comment"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=40)
+     * @Groups({"read:comment"})
      */
     private $ProductName;
 
@@ -66,6 +71,7 @@ class Products
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read:comment"})
      */
     private $picture;
 
@@ -75,9 +81,9 @@ class Products
     private $description;
 
     /**
-     * @ORM\OneToMany(targetEntity=Comments::class, mappedBy="id_product", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Comments::class, mappedBy="product", orphanRemoval=true)
      */
-    private $coments;
+    private $comments;
 
     public function __construct()
     {
@@ -224,28 +230,28 @@ class Products
     /**
      * @return Collection|Comments[]
      */
-    public function getComents(): Collection
+    public function getComments(): Collection
     {
-        return $this->coments;
+        return $this->comments;
     }
 
-    public function addComent(Comments $coment): self
+    public function addComment(Comments $comment): self
     {
-        if (!$this->coments->contains($coment)) {
-            $this->coments[] = $coment;
-            $coment->setIdProduct($this);
+        if (!$this->comments->contains($comment)) {
+            $this->comments[] = $comment;
+            $comment->setIdProduct($this);
         }
 
         return $this;
     }
 
-    public function removeComent(Comments $coment): self
+    public function removeComment(Comments $comment): self
     {
-        if ($this->coments->contains($coment)) {
-            $this->coments->removeElement($coment);
+        if ($this->comments->contains($comment)) {
+            $this->comments->removeElement($comment);
             // set the owning side to null (unless already changed)
-            if ($coment->getIdProduct() === $this) {
-                $coment->setIdProduct(null);
+            if ($comment->getIdProduct() === $this) {
+                $comment->setIdProduct(null);
             }
         }
 

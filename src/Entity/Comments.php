@@ -2,23 +2,25 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use Doctrine\ORM\Mapping as ORM;
+use App\Repository\CommentsRepository;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\CommentsRepository;
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
  * @ORM\Entity(repositoryClass=CommentsRepository::class)
  * @ApiResource(
  *     normalizationContext={
  *     "groups"={"read:comment"},
+ *     "enable_max_depth"=true
  *     },
  *     attributes={
  *     "order"={"date":"DESC"}
  *     },
- *     paginationItemsPerPage=2,
+ *     paginationItemsPerPage=2
  * )
  * @ApiFilter(SearchFilter::class, properties={"id_product": "exact"})
  *
@@ -53,17 +55,19 @@ class Comments
 
     /**
      * @ORM\ManyToOne(targetEntity=Products::class, inversedBy="comments")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(name="id_product_id", referencedColumnName="id", nullable=false)
      * @Groups({"read:comment"})
+     * @MaxDepth(1)
      */
-    private $id_product;
+    private $product;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="comments")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="comments")
+     * @ORM\JoinColumn(name="id_user_id", referencedColumnName="id", nullable=false)
      * @Groups({"read:comment"})
+     * @MaxDepth(1)
      */
-    private $id_user;
+    private $user;
 
     public function getId(): ?int
     {
@@ -106,26 +110,26 @@ class Comments
         return $this;
     }
 
-    public function getIdProduct(): ?Products
+    public function getProduct(): ?Products
     {
-        return $this->id_product;
+        return $this->product;
     }
 
-    public function setIdProduct(?Products $id_product): self
+    public function setProduct(?Products $product): self
     {
-        $this->id_product = $id_product;
+        $this->product = $product;
 
         return $this;
     }
 
-    public function getIdUser(): ?User
+    public function getUser(): ?User
     {
-        return $this->id_user;
+        return $this->user;
     }
 
-    public function setIdUser(?User $id_user): self
+    public function setUser(?User $user): self
     {
-        $this->id_user = $id_user;
+        $this->user = $user;
 
         return $this;
     }
