@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\CommentsRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,11 +15,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     normalizationContext={
  *     "groups"={"read:comment"},
  *     },
- *
  *     attributes={
  *     "order"={"date":"DESC"}
  *     }
  * )
+ * @ApiFilter(SearchFilter::class, properties={"id_product": "exact"})
  *
  */
 class Comments
