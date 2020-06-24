@@ -11,7 +11,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=ProductsRepository::class)
- * 
+ * @ApiResource(
+ *     collectionOperations={},
+ *     itemOperations={
+ *      "get"={
+ *        "controller"=App\Controller\Api\EmptyController::class,
+ *      "read"=false,
+ *      "deserialize"=false
+ *          }
+ *     }
+ * )
+ *
  */
 class Products
 {
@@ -19,7 +29,6 @@ class Products
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"read:comment"})
      */
     private $id;
 
@@ -71,7 +80,6 @@ class Products
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read:comment"})
      */
     private $picture;
 

@@ -20,7 +20,30 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *     attributes={
  *     "order"={"date":"DESC"}
  *     },
- *     paginationItemsPerPage=2
+ *     paginationItemsPerPage=2,
+ *     itemOperations={
+ *      "get"={
+ *          "normalization_context"={"groups"={"read:comment", "read:comment:full"}}
+ *     },
+ *      "put"={
+ *"security"="is_granted('EDIT_COMMENT', object)",
+ *     "denormalization_context"={"groups"="update:comment"}
+ *     },
+ *     "delete"={
+ * "security"="is_granted('EDIT_COMMENT', object)"
+ *     }
+ *     },
+ *     collectionOperations={
+ *       "post"={
+ *          "normalization_context"={"groups"={"read:comment", "read:comment:full"}},
+ *          "denormalization_context"={"groups"="create:comment"},
+ *          "security"="is_granted('EDIT_COMMENT', object)",
+ *          "controller"=App\Controller\Api\CommentCreateController::class
+ *     },
+ *       "get"={
+ *          "normalization_context"={"groups"={"read:comment", "read:comment:full"}},
+ *     }
+ *     }
  * )
  * @ApiFilter(SearchFilter::class, properties={"id_product": "exact"})
  *
@@ -37,7 +60,7 @@ class Comments
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"read:comment"})
+     * @Groups({"read:comment", "create:comment", "update:comment"})
      */
     private $content;
 
@@ -56,7 +79,7 @@ class Comments
     /**
      * @ORM\ManyToOne(targetEntity=Products::class, inversedBy="comments")
      * @ORM\JoinColumn(name="id_product_id", referencedColumnName="id", nullable=false)
-     * @Groups({"read:comment"})
+     * @Groups({"read:comment:full", "create:comment"})
      * @MaxDepth(1)
      */
     private $product;
