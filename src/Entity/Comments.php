@@ -17,7 +17,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     },
  *     attributes={
  *     "order"={"date":"DESC"}
- *     }
+ *     },
  *     paginationItemsPerPage=2,
  * )
  * @ApiFilter(SearchFilter::class, properties={"id_product": "exact"})
