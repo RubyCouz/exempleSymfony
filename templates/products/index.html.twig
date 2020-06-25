@@ -37,7 +37,7 @@
                     <td>{{ product.RedorderLevel }}</td>
                     <td>{{ product.Discontinued }}</td>
                     <td>
-                        <a href="{{ path('products_show', {'id': product.id}) }}">show</a>
+                        <a href="{{ path('products_show', {'id': product.id, 'user': app.user.id}) }}">show</a>
                         <a href="{{ path('products_edit', {'id': product.id}) }}">edit</a>
                     </td>
                 </tr>
@@ -68,7 +68,7 @@
                            </div>
                             <div class="row">
                                <div class="col-sm-6">
-                                   <a href="{{ path('products_show', {'id': product.id}) }}">Détail</a>
+                                   <a href="{{ path('products_show', {'id': product.id, 'user': app.user.id}) }}">Détail</a>
                                </div>
                            </div>
                         </div>

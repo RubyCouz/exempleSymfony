@@ -24,11 +24,11 @@ class ProductsController extends AbstractController
     /**
      * @Route("/", name="products_index", methods={"GET"})
      * @param ProductsRepository $productsRepository
-     * @param CommentRepository $commentRepository
      * @return Response
      */
     public function index(ProductsRepository $productsRepository): Response
     {
+      //  dd($productsRepository->findAll());
         return $this->render('products/index.html.twig', [
             'products' => $productsRepository->findAll(),
 
@@ -103,8 +103,8 @@ class ProductsController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
             $comment->setDate($date);
-            $comment->setIdProduct($product);
-            $comment->setIdUser($user);
+            $comment->setProduct($product);
+            $comment->setUser($user);
             $entityManager->persist($comment);
             $entityManager->flush();
 
@@ -114,7 +114,7 @@ class ProductsController extends AbstractController
         }
         return $this->render('products/show.html.twig', [
             'product' => $product,
-            'comments' => $product->getComents(),
+            'comments' => $product->getComments(),
             'form' => $form->createView(),
         ]);
 

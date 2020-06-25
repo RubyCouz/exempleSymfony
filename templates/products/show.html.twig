@@ -91,78 +91,86 @@
                     <p class="h2">Commentaires</p>
                 </div>
             </div>
-            {% for comment in comments %}
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-sm-2">
-                                      <span>Le {{ comment.date|date("d/m/Y") }}</span>
-                                    </div>
 
-                                    <div class="col-sm-2">
-                                        {% if comment.dateUpdate != null %}
-                                        <span>modifié le {{ comment.dateUpdate|date("d/m/Y") }}</span>
-                                        {% endif %}
-                                    </div>
+            {# section commentaire Vue.js#}
+            {#création d'un élément personnalisé#}
+            {#            récupération de l'id de l'article et de l'utilisateur pour savoir s'il a le droit ou non de commenter/modifier/supprimer#}
+            <post-comment data-post="{{ product.id }}" data_user="{{ app.user ? app.user.id : 0 }}"></post-comment>
 
-                                    <div class="col-sm-2">
-                                       <span>par {{ comment.idUser }}</span>
-                                    </div>
-                                    {% if app.user.email == comment.idUser %}
-                                    <div class="col-sm-3">
-                                        <span><a href="{{ path('comments_edit', {'id' : comment.id, 'product': product.id, 'user': app.user.id,}) }}" class="btn btn-primary">Modifier</a></span>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal{{ comment.id }}">
-                                            Supprimer
-                                        </button>
-                                        <!-- del Modal -->
-                                        <div class="modal fade" id="exampleModal{{ comment.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="exampleModalLabel">Suppression du commentaire</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p>Etes-vous sûr de vouloir supprimer ce commentaire ?</p>
-                                                        <p>Cette action sera permanente et irréversible.</p>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
-                                                        <form method="post" action="{{ path('comments_delete', {'id': comment.id, 'user': app.user.id, 'product': product.id}) }}" >
-                                                            <input type="hidden" name="_method" value="DELETE">
-                                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ comment.id) }}">
-                                                            <button class="btn btn-danger">Oui</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+            {#            {% for comment in comments %}#}
+            {#                <div class="row">#}
+            {#                    <div class="col-sm-12">#}
+            {#                        <div class="card">#}
+            {#                            <div class="card-body">#}
+            {#                                <div class="row">#}
+            {#                                    <div class="col-sm-2">#}
+            {#                                      <span>Le {{ comment.date|date("d/m/Y") }}</span>#}
+            {#                                    </div>#}
 
-                                    </div>
-                                    {% endif %}
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        {{ comment.content }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% if app.user.email == comment.idUser %}
+            {#                                    <div class="col-sm-2">#}
+            {#                                        {% if comment.dateUpdate != null %}#}
+            {#                                        <span>modifié le {{ comment.dateUpdate|date("d/m/Y") }}</span>#}
+            {#                                        {% endif %}#}
+            {#                                    </div>#}
 
-                {% endif %}
+            {#                                    <div class="col-sm-2">#}
+            {#                                       <span>par {{ comment.idUser }}</span>#}
+            {#                                    </div>#}
+            {#                                    {% if app.user.email == comment.idUser %}#}
+            {#                                    <div class="col-sm-3">#}
+            {#                                        <span><a href="{{ path('comments_edit', {'id' : comment.id, 'product': product.id, 'user': app.user.id,}) }}" class="btn btn-primary">Modifier</a></span>#}
+            {#                                    </div>#}
+            {#                                    <div class="col-sm-3">#}
+            {#                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal{{ comment.id }}">#}
+            {#                                            Supprimer#}
+            {#                                        </button>#}
+            {#                                        <!-- del Modal -->#}
+            {#                                        <div class="modal fade" id="exampleModal{{ comment.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">#}
+            {#                                            <div class="modal-dialog" role="document">#}
+            {#                                                <div class="modal-content">#}
+            {#                                                    <div class="modal-header">#}
+            {#                                                        <h5 class="modal-title" id="exampleModalLabel">Suppression du commentaire</h5>#}
+            {#                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">#}
+            {#                                                            <span aria-hidden="true">&times;</span>#}
+            {#                                                        </button>#}
+            {#                                                    </div>#}
+            {#                                                    <div class="modal-body">#}
+            {#                                                        <p>Etes-vous sûr de vouloir supprimer ce commentaire ?</p>#}
+            {#                                                        <p>Cette action sera permanente et irréversible.</p>#}
+            {#                                                    </div>#}
+            {#                                                    <div class="modal-footer">#}
+            {#                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>#}
+            {#                                                        <form method="post" action="{{ path('comments_delete', {'id': comment.id, 'user': app.user.id, 'product': product.id}) }}" >#}
+            {#                                                            <input type="hidden" name="_method" value="DELETE">#}
+            {#                                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ comment.id) }}">#}
+            {#                                                            <button class="btn btn-danger">Oui</button>#}
+            {#                                                        </form>#}
+            {#                                                    </div>#}
+            {#                                                </div>#}
+            {#                                            </div>#}
+            {#                                        </div>#}
 
-            {% else %}
-                Pas de Commentaire pour cet article
-            {% endfor %}
+            {#                                    </div>#}
+            {#                                    {% endif %}#}
+            {#                                </div>#}
+            {#                                <div class="row">#}
+            {#                                    <div class="col-sm-12">#}
+            {#                                        {{ comment.content }}#}
+            {#                                    </div>#}
+            {#                                </div>#}
+            {#                            </div>#}
+            {#                        </div>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#                {% if app.user.email == comment.idUser %}#}
+
+            {#                {% endif %}#}
+
+            {#            {% else %}#}
+            {#                Pas de Commentaire pour cet article#}
+            {#            {% endfor %}#}
+
+
         {% endif %}
 
         <p class="h3">Ajouter un commentaire</p>
