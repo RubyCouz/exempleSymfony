@@ -29,6 +29,7 @@ class Products
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"read:comment"})
      */
     private $id;
 
@@ -95,7 +96,7 @@ class Products
 
     public function __construct()
     {
-        $this->coments = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId(): ?int

@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\Security;
 class CommentCreateController
 {
     private $security;
-
+// récupération de l'utilisateur
     public function __construct(Security $security)
     {
         // récupération de la connection

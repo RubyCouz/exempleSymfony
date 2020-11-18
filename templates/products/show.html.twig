@@ -4,81 +4,28 @@
 
 {% block body %}
     <div class="container">
-        {% if (is_granted('ROLE_ADMIN')) %}
-            <h1>Products</h1>
-
-            <table class="table">
-                <tbody>
-                <tr>
-                    <th>Id</th>
-                    <td>{{ product.id }}</td>
-                </tr>
-                <tr>
-                    <th>ProductName</th>
-                    <td>{{ product.ProductName }}</td>
-                </tr>
-                <tr>
-                    <th>SupplierId</th>
-                    <td>{{ product.SupplierId }}</td>
-                </tr>
-                <tr>
-                    <th>CategoryId</th>
-                    <td>{{ product.CategoryId }}</td>
-                </tr>
-                <tr>
-                    <th>QuantityPerUnit</th>
-                    <td>{{ product.QuantityPerUnit }}</td>
-                </tr>
-                <tr>
-                    <th>UnitPrice</th>
-                    <td>{{ product.UnitPrice }}</td>
-                </tr>
-                <tr>
-                    <th>UnitsInStock</th>
-                    <td>{{ product.UnitsInStock }}</td>
-                </tr>
-                <tr>
-                    <th>UnitsOnOrder</th>
-                    <td>{{ product.UnitsOnOrder }}</td>
-                </tr>
-                <tr>
-                    <th>RedorderLevel</th>
-                    <td>{{ product.RedorderLevel }}</td>
-                </tr>
-                <tr>
-                    <th>Discontinued</th>
-                    <td>{{ product.Discontinued }}</td>
-                </tr>
-                </tbody>
-            </table>
-
-            <a href="{{ path('products_index') }}">back to list</a>
-
-            <a href="{{ path('products_edit', {'id': product.id}) }}">edit</a>
-
-            {{ include('products/_delete_form.html.twig') }}
-        {% else %}
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <img src="{{ asset('images/profil/' ~ product.picture ) }}" alt="photo du produit"
-                                         title="{{ product.picture }}" class="cardPic">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card" id="product" data-id="{{ product.id }}">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <img src="{{ asset('images/profil/' ~ product.picture) }}" alt="photo article"
+                                     title="photo article" class="cardPic">
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <p>{{ product.productName }}</p>
+                                    </div>
                                 </div>
-                                <div class="col-sm-6">
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            {{ product.ProductName }}
-                                        </div>
-                                        <div class="col-sm-12">
-                                            {% if product.description != null %}
-                                                {{ product.description }}
-                                            {% else %}
-                                                <p>Pas de description pour ce produit</p>
-                                            {% endif %}
-                                        </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        {% if product.description == null %}
+                                            <p>Pas de description disponible pour ce produit</p>
+                                        {% else %}
+                                            <p>{{ product.description }}</p>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -86,101 +33,98 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <p class="h2">Commentaires</p>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <p class="h2">Commentaires</p>
+            </div>
+        </div>
+        <div id="app" data-connectUSer="{{ app.user.id }}">
+
+            <div v-for="comment in info" :key="comment.id">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <p>Par : ${comment.user.email}</p>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <p>Le : ${comment.date | formatDate('DD/MM/YYYY')}</p>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <p v-if="comment.edit">Modifié le : ${ comment.edit | formatDate('DD/MM/YYYY') }</p>
+                                    </div>
+                                    <div class="col-sm-2" v-if="{{ app.user.id }} === comment.user.id">
+                                        <button class="btn btn-primary" v-on:click="editComment(comment)"><i
+                                                    class="fas fa-marker"></i></button>
+                                    </div>
+                                    <div class="col-sm-2" v-if="{{ app.user.id }} === comment.user.id">
+                                        <button class="btn btn-danger" data-toggle="modal" :data-target="'#modal' + comment.id"><i class="fas fa-trash-alt"></i></button>
+
+                                        <div class="modal fade" :id="'modal' + comment.id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Attention !!!</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>Voulez supprimer ce commentaire ?</p>
+                                                        <p>Cette action sera irreversible.</p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                                                        <button type="button" class="btn btn-danger" @click="deleteComment(comment)" data-dismiss="modal">Supprimer le commentaire</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="row" v-if="!comment.editing">
+                                    <div class="col-sm-12">
+                                        <p>${ comment.content }</p>
+                                    </div>
+                                </div>
+                                <div class="row" v-else>
+                                    <div class="col-sm-12">
+                                        <form action="" v-on:submit.prevent="validEdit(comment)">
+                                            <div class="form-group">
+                                                <label for="content"></label>
+                                                <textarea type="text" name="content" id="content" class="form-control"
+                                                          v-model="comment.content"
+                                                          v-focus>${ comment.content }</textarea>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary" @click="" id="comment"
+                                                    :data-id="comment.id">Valider
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            {# section commentaire Vue.js#}
-            {#création d'un élément personnalisé#}
-            {#            récupération de l'id de l'article et de l'utilisateur pour savoir s'il a le droit ou non de commenter/modifier/supprimer#}
-            <post-comment data-post="{{ product.id }}" data_user="{{ app.user ? app.user.id : 0 }}"></post-comment>
-
-            {#            {% for comment in comments %}#}
-            {#                <div class="row">#}
-            {#                    <div class="col-sm-12">#}
-            {#                        <div class="card">#}
-            {#                            <div class="card-body">#}
-            {#                                <div class="row">#}
-            {#                                    <div class="col-sm-2">#}
-            {#                                      <span>Le {{ comment.date|date("d/m/Y") }}</span>#}
-            {#                                    </div>#}
-
-            {#                                    <div class="col-sm-2">#}
-            {#                                        {% if comment.dateUpdate != null %}#}
-            {#                                        <span>modifié le {{ comment.dateUpdate|date("d/m/Y") }}</span>#}
-            {#                                        {% endif %}#}
-            {#                                    </div>#}
-
-            {#                                    <div class="col-sm-2">#}
-            {#                                       <span>par {{ comment.idUser }}</span>#}
-            {#                                    </div>#}
-            {#                                    {% if app.user.email == comment.idUser %}#}
-            {#                                    <div class="col-sm-3">#}
-            {#                                        <span><a href="{{ path('comments_edit', {'id' : comment.id, 'product': product.id, 'user': app.user.id,}) }}" class="btn btn-primary">Modifier</a></span>#}
-            {#                                    </div>#}
-            {#                                    <div class="col-sm-3">#}
-            {#                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal{{ comment.id }}">#}
-            {#                                            Supprimer#}
-            {#                                        </button>#}
-            {#                                        <!-- del Modal -->#}
-            {#                                        <div class="modal fade" id="exampleModal{{ comment.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">#}
-            {#                                            <div class="modal-dialog" role="document">#}
-            {#                                                <div class="modal-content">#}
-            {#                                                    <div class="modal-header">#}
-            {#                                                        <h5 class="modal-title" id="exampleModalLabel">Suppression du commentaire</h5>#}
-            {#                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">#}
-            {#                                                            <span aria-hidden="true">&times;</span>#}
-            {#                                                        </button>#}
-            {#                                                    </div>#}
-            {#                                                    <div class="modal-body">#}
-            {#                                                        <p>Etes-vous sûr de vouloir supprimer ce commentaire ?</p>#}
-            {#                                                        <p>Cette action sera permanente et irréversible.</p>#}
-            {#                                                    </div>#}
-            {#                                                    <div class="modal-footer">#}
-            {#                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>#}
-            {#                                                        <form method="post" action="{{ path('comments_delete', {'id': comment.id, 'user': app.user.id, 'product': product.id}) }}" >#}
-            {#                                                            <input type="hidden" name="_method" value="DELETE">#}
-            {#                                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ comment.id) }}">#}
-            {#                                                            <button class="btn btn-danger">Oui</button>#}
-            {#                                                        </form>#}
-            {#                                                    </div>#}
-            {#                                                </div>#}
-            {#                                            </div>#}
-            {#                                        </div>#}
-
-            {#                                    </div>#}
-            {#                                    {% endif %}#}
-            {#                                </div>#}
-            {#                                <div class="row">#}
-            {#                                    <div class="col-sm-12">#}
-            {#                                        {{ comment.content }}#}
-            {#                                    </div>#}
-            {#                                </div>#}
-            {#                            </div>#}
-            {#                        </div>#}
-            {#                    </div>#}
-            {#                </div>#}
-            {#                {% if app.user.email == comment.idUser %}#}
-
-            {#                {% endif %}#}
-
-            {#            {% else %}#}
-            {#                Pas de Commentaire pour cet article#}
-            {#            {% endfor %}#}
-
-
-        {% endif %}
-
-        <p class="h3">Ajouter un commentaire</p>
-        {{ form_start(form) }}
-        {{ form_row(form.content) }}
-        <div class="row  text-center">
-            <div class="col-sm-6 offset-sm-6">
-                <button class="btn btn-primary">{{ button_label|default('Ajouter un commentaire') }}</button>
+            <div class="row">
+                <div class="col-sm-8 offset-sm-2">
+                    <p class="h2">Ajouter un commentaire</p>
+                    <form action="" v-on:submit.prevent="validNewComment()">
+                        <div class="form-group">
+                            <label for="addComment"></label>
+                            <textarea type="text" name="content" id="addComment" class="form-control"
+                                      v-model="addComment"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Valider</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-    {{ form_end(form) }}
 {% endblock %}

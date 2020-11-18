@@ -42,6 +42,7 @@ class CommentsController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+            $comment->setEditing(0);
             $entityManager->persist($comment);
             $entityManager->flush();
 
@@ -56,6 +57,8 @@ class CommentsController extends AbstractController
 
     /**
      * @Route("/{id}", name="comments_show", methods={"GET"})
+     * @param Comments $comment
+     * @return Response
      */
     public function show(Comments $comment): Response
     {
@@ -77,16 +80,16 @@ class CommentsController extends AbstractController
         $form = $this->createForm(CommentsType::class, $comment);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $date = new \DateTime();
-            $comment->setDateUpdate($date);
-            $this->getDoctrine()->getManager()->flush();
-
-            return $this->redirectToRoute('products_show', [
-                'id' => $product->getId(),
-                'user' => $user->getId(),
-            ]);
-        }
+//        if ($form->isSubmitted() && $form->isValid()) {
+//            $date = new \DateTime();
+//            $comment->setDateUpdate($date);
+//            $this->getDoctrine()->getManager()->flush();
+//
+//            return $this->redirectToRoute('products_show', [
+//                'id' => $product->getId(),
+//                'user' => $user->getId(),
+//            ]);
+//        }
 
         return $this->render('comments/edit.html.twig', [
             'user' => $user->getId(),
