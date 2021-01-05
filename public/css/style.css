@@ -2,3 +2,10 @@
     width: 100%;
     height: auto;
 }
+
+.component-fade-enter-active, .component-fade-leave-active {
+    transition: opacity .5s ease;
+}
+.component-fade-enter, .component-fade-leave-to{
+    opacity: 0;
+}

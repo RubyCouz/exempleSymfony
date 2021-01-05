@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ProductsRepository::class)
@@ -29,12 +30,15 @@ class Products
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"read:comment"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=40)
      * @Groups({"read:comment"})
+     * @Assert\Regex("/^[a-zA-Z\s]+$/")
+     * @Assert\NotBlank()
      */
     private $ProductName;
 
@@ -95,7 +99,7 @@ class Products
 
     public function __construct()
     {
-        $this->coments = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId(): ?int

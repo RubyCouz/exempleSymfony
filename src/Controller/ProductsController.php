@@ -7,7 +7,7 @@ use App\Entity\Products;
 use App\Entity\User;
 use App\Form\CommentsType;
 use App\Form\ProductsType;
-use App\Repository\CommentRepository;
+
 use App\Repository\CommentsRepository;
 use App\Repository\ProductsRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

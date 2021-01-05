@@ -9,6 +9,8 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use Symfony\Component\Validator\Constraints as Assert;
+// paginationItemsPerPage=2, => pagination des commentaires
 
 /**
  * @ORM\Entity(repositoryClass=CommentsRepository::class)
@@ -20,13 +22,12 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *     attributes={
  *     "order"={"date":"DESC"}
  *     },
- *     paginationItemsPerPage=2,
  *     itemOperations={
  *      "get"={
  *          "normalization_context"={"groups"={"read:comment", "read:comment:full"}}
  *     },
  *      "put"={
- *"security"="is_granted('EDIT_COMMENT', object)",
+ *      "security"="is_granted('EDIT_COMMENT', object)",
  *     "denormalization_context"={"groups"="update:comment"}
  *     },
  *     "delete"={
@@ -37,7 +38,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *       "post"={
  *          "normalization_context"={"groups"={"read:comment", "read:comment:full"}},
  *          "denormalization_context"={"groups"="create:comment"},
- *          "security"="is_granted('EDIT_COMMENT', object)",
+ *          "security"="is_granted('IS_AUTHENTICATED_FULLY', object)",
  *          "controller"=App\Controller\Api\CommentCreateController::class
  *     },
  *       "get"={
@@ -45,8 +46,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *     }
  *     }
  * )
- * @ApiFilter(SearchFilter::class, properties={"id_product": "exact"})
- *
+ * @ApiFilter(SearchFilter::class, properties={"product": "exact"})
  */
 class Comments
 {
@@ -59,22 +59,22 @@ class Comments
     private $id;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      * @Groups({"read:comment", "create:comment", "update:comment"})
      */
     private $content;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"read:comment"})
+     * @Groups({"read:comment", "create:comment"})
      */
     private $date;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read:comment"})
+     * @ORM\Column(type="datetime")
+     * @Groups({"read:comment", "update:comment"})
      */
-    private $date_update;
+    private $edit;
 
     /**
      * @ORM\ManyToOne(targetEntity=Products::class, inversedBy="comments")
@@ -87,10 +87,16 @@ class Comments
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="comments")
      * @ORM\JoinColumn(name="id_user_id", referencedColumnName="id", nullable=false)
-     * @Groups({"read:comment"})
+     * @Groups({"read:comment", "create:comment"})
      * @MaxDepth(1)
      */
     private $user;
+
+    /**
+     * @ORM\Column(type="smallint")
+     * @Groups({"read:comment", "create:comment"})
+     */
+    private $editing;
 
     public function getId(): ?int
     {
@@ -102,7 +108,7 @@ class Comments
         return $this->content;
     }
 
-    public function setContent(string $content): self
+    public function setContent(?string $content): self
     {
         $this->content = $content;
 
@@ -121,14 +127,14 @@ class Comments
         return $this;
     }
 
-    public function getDateUpdate(): ?\DateTimeInterface
+    public function getEdit(): ?\DateTimeInterface
     {
-        return $this->date_update;
+        return $this->edit;
     }
 
-    public function setDateUpdate(?\DateTimeInterface $date_update): self
+    public function setEdit(?\DateTimeInterface $edit): self
     {
-        $this->date_update = $date_update;
+        $this->edit = $edit;
 
         return $this;
     }
@@ -153,6 +159,18 @@ class Comments
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getEditing(): ?int
+    {
+        return $this->editing;
+    }
+
+    public function setEditing(int $editing): self
+    {
+        $this->editing = $editing;
 
         return $this;
     }
